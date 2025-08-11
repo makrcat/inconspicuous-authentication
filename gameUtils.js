@@ -105,6 +105,24 @@ export const spawn_info = {
     "name this note": "custom",
 }
 
+export const SPAWN_ORDER = [
+
+    "verify email",
+    "last four digits of SSN",
+    "terms of affliction",
+    "publicity policy",
+
+    "pet rock??",
+    "mother's maiden name",
+    "grass touched today",
+    "forfeit newborn",
+
+    "pipe bomb",
+    "the bee movie script",
+    "codons of this amino acid",
+    "name this note"
+]
+
 
 export function checkThis(fieldName, inputEl) {
 
@@ -273,6 +291,8 @@ export function createNumberSelector(labelText, top, left) {
     return createPhysBody(wrapper);
 }
 
+
+
 export function createCustom(name, top, left) {
     const wrapper = document.createElement('div');
     wrapper.classList.add('chaos');
@@ -313,10 +333,10 @@ export function createCustom(name, top, left) {
         img.style.marginTop = '20px';
         img.setAttribute('draggable', 'false');
 
-        img.style.maxWidth = '200px';  
-        img.style.maxHeight = '150px';  
-        img.style.width = 'auto';      
-        img.style.height = 'auto'; 
+        img.style.maxWidth = '200px';
+        img.style.maxHeight = '150px';
+        img.style.width = 'auto';
+        img.style.height = 'auto';
         img.style.objectFit = 'contain';
 
         wrapper.appendChild(img);
@@ -341,6 +361,10 @@ export function createCustom(name, top, left) {
 
     } else if (name == "name this note") {
 
+    } else if (name == "thingy") {
+
+        const thingy = `<div id="thingy" style="position: absolute; bottom: 0;"></div>`;
+        wrapper.innerHTML = thingy;
     } else {
         wrapper.style.height = "auto";
     }
@@ -350,14 +374,14 @@ export function createCustom(name, top, left) {
 }
 
 
-
 /** @param s { string | null } */
-export function createNotif(s) {
+export function createNotif(s, color = red_color) {
     /** @type {HTMLElement | null} */
     const notification = document.getElementById('vm');
     if (!notification) throw new Error("didn't find notification");
 
 
+    if (color != red_color) notification.style.backgroundColor = color;
     if (s == null) return;
 
 

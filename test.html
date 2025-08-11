@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Snake </title>
+    <style>
+        body {
+            font-family: system-ui;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        svg {
+            width: 300px;
+            display: block;
+            margin: 0 auto;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* Track (full path) */
+        #track {
+            fill: none;
+            stroke: #ddd;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+
+
+        #progress {
+            fill: none;
+            stroke: #187bff;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        #progress.darker {
+            stroke: #265bc1;
+        }
+
+        /* Thumb styled like default slider knob */
+        #thumb {
+            fill: #187bff;
+            stroke: #187bff;
+            stroke-width: 1;
+            r: 12;
+            cursor: grab;
+            transition: filter 0.2s ease;
+        }
+
+        #thumb:active {
+            fill: #015dc8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <label>Snake Slider: <span id="val">50</span></label>
+
+    <svg id="ui" viewBox="20 -350 500 430" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100"
+        aria-valuenow="50" aria-label="Snake slider">
+
+        <!-- track border path -->
+        <path id="track-border"
+            d="M 39 43 C 42 -135 42 -159 44 -238 S 140 -325 142 -240 S 235 -154 235 -239 S 321 -323 323 -238 S 414 -158 415 -238 S 502 -320 502 -237 S 501 -158 505 45"
+            stroke="#9a9a9a" stroke-width="12" fill="none" stroke-linecap="round" />
+
+        <path id="track"
+            d="M 39 43 C 42 -135 42 -159 44 -238 S 140 -325 142 -240 S 235 -154 235 -239 S 321 -323 323 -238 S 414 -158 415 -238 S 502 -320 502 -237 S 501 -158 505 45"
+            stroke="#e5e5e5" stroke-width="8" fill="none" stroke-linecap="round" />
+
+
+        <path id="progress" d="" />
+        <circle id="thumb" r="12" cx="0" cy="0"></circle>
+
+
+    </svg>
+
+    <label>Snake Slider: <span id="val1">50</span></label>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="38.9 -310.723 501.9 355.8" class="snake-slider"
+        data-label-id="val1" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"
+        aria-label="Snake slider">
+
+        <!-- Track path -->
+        <path id="track"
+            d="M 39 43 C 42 -135 41 -215 50 -257 S 79 -314 241 -310 S 413 -306 247 -287 S 104 -247 251 -249 S 433 -238 255 -221 S 102 -194 269 -186 S 483 -178 519 -192 S 546 -265 494 -252 S 464 -172 505 45"
+            stroke="#e5e5e5" stroke-width="8" fill="none" stroke-linecap="round" />
+
+        <!-- Progress path -->
+        <path id="progress" d="" stroke="#187bff" stroke-width="8" fill="none" stroke-linecap="round" />
+
+        <!-- Thumb -->
+        <circle id="thumb" r="12" cx="0" cy="0" fill="#187bff" stroke="#187bff" stroke-width="1" cursor="grab" />
+
+    </svg>
+
+
+
+
+
+    <script>
+        const svg = document.getElementById('ui');
+        const track = document.getElementById('track');
+        const progress = document.getElementById('progress');
+        const thumb = document.getElementById('thumb');
+        const valLabel = document.getElementById('val');
+
+        const pathLen = track.getTotalLength();
+        const MIN = 0;
+        const MAX = 100;
+
+        function valueToLength(v) {
+            const t = (v - MIN) / (MAX - MIN);
+            return t * pathLen;
+        }
+        function lengthToValue(len) {
+            const t = len / pathLen;
+            return Math.round(MIN + t * (MAX - MIN));
+        }
+        function placeThumbByValue(v) {
+            const len = valueToLength(v);
+            const p = track.getPointAtLength(len);
+            thumb.setAttribute('cx', p.x);
+            thumb.setAttribute('cy', p.y);
+
+            // Remove the non-working getPathData() slicing
+            updateProgressPath(len);
+
+            svg.setAttribute('aria-valuenow', v);
+            valLabel.textContent = v;
+        }
+
+
+        function updateProgressPath(len) {
+            let d = '';
+            const sampleCount = 100;
+            for (let i = 0; i <= sampleCount; i++) {
+                const sampleLen = (i / sampleCount) * len;
+                const pt = track.getPointAtLength(sampleLen);
+                d += (i === 0 ? `M${pt.x} ${pt.y}` : ` L${pt.x} ${pt.y}`);
+            }
+            progress.setAttribute('d', d);
+        }
+
+
+        function nearestLengthToPoint(x, y, samples = 200) {
+            let best = 0, bestDist = Infinity;
+            for (let i = 0; i <= samples; i++) {
+                const pos = track.getPointAtLength((i / samples) * pathLen);
+                const dx = pos.x - x, dy = pos.y - y;
+                const d = dx * dx + dy * dy;
+                if (d < bestDist) { bestDist = d; best = (i / samples) * pathLen; }
+            }
+            return best;
+        }
+
+        let dragging = false;
+        svg.addEventListener('pointerdown', (e) => {
+            progress.classList.add('darker');
+            svg.setPointerCapture(e.pointerId);
+            dragging = true;
+            updateFromPointer(e);
+        });
+
+        svg.addEventListener('pointerup', (e) => {
+            progress.classList.remove('darker');
+            dragging = false;
+            svg.releasePointerCapture(e.pointerId);
+        });
+
+        svg.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            updateFromPointer(e);
+        });
+
+
+
+        function updateFromPointer(e) {
+            const pt = svg.createSVGPoint();
+            pt.x = e.clientX; pt.y = e.clientY;
+            const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+            const nearestLen = nearestLengthToPoint(svgP.x, svgP.y);
+            const newVal = lengthToValue(nearestLen);
+            placeThumbByValue(newVal);
+        }
+
+        placeThumbByValue(50);
+    </script>
+
+</body>
+
+</html>

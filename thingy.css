@@ -1,0 +1,114 @@
+body {
+    font-family: system-ui;
+    padding: 20px;
+}
+
+
+label {
+    display: block;
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 24px;
+}
+
+svg {
+    width: 300px;
+    display: block;
+    margin: 0 auto;
+    user-select: none;
+    touch-action: none;
+}
+
+/* Track (full path) */
+#track {
+    fill: none;
+    stroke: #ddd;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+
+#progress {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+}
+
+
+.progress-blue {
+    stroke: #187bff;
+}
+
+.progress-blue.darker {
+    stroke: #265bc1;
+}
+
+.progress-red {
+    stroke: #ff1818;
+}
+
+.progress-red.darker {
+    stroke: #c12626;
+}
+
+.progress-orange {
+    stroke: #ffa318;
+}
+
+.progress-orange.darker {
+    stroke: #c18026;
+}
+
+.progress-green {
+    stroke: rgb(25, 192, 25);
+}
+
+.progress-green.darker {
+    stroke: green;
+}
+
+
+#thumb, #progress {
+  will-change: transform, d;
+}
+
+
+
+#thumb {
+    r: 12;
+    cursor: grab;
+}
+
+.thumb-blue {
+    fill: #187bff;
+}
+
+.thumb-blue.darker {
+    fill: #015dc8;
+}
+
+.thumb-red {
+    fill: #ff1818;
+}
+
+.thumb-red.darker {
+    fill: #c12626;
+}
+
+.thumb-orange {
+    fill: #ffa318;
+}
+
+.thumb-orange.darker {
+    fill: #c18026;
+}
+
+.thumb-green {
+    fill: rgb(25, 192, 25);
+}
+
+.thumb-green.darker {
+    fill: green;
+}
+
+/* #26aac1;*/

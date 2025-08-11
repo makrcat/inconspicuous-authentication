@@ -155,54 +155,24 @@ function offFloor() {
 }
 
 
-let curIndex = 0;
+let nextIndex = 0;
+let step = document.getElementById("step");
 
-export function MORE() {
+function incrementIndex() {
+    console.log(nextIndex);
+    nextIndex++;
+    console.log("incremented,", nextIndex);
 
-    for (const obj of physicsObjects) {
-        const input = obj.elem.querySelector('input');
-        if (!input) continue;
-
-        const bg = input.style.backgroundColor;
-        if (bg !== game.green_color) {
-            return false;
-        }
+    //
+    if (step == null) {
+        console.log("couldn't find");
+        return;
     }
+    step.innerHTML = nextIndex.toString();
+}
 
-    const keys = Object.keys(spawn_info);
-    const startX = window.innerWidth / 2 - 330;
-
-
-    if (curIndex < 12) {
-
-        for (let i = 0; i < 4; i++) {
-
-            const labelText = keys[curIndex + i];
-            // maybe this is unordered.?? is that the bug? #bug
-            const type = spawn_info[labelText];
-
-            const x = startX + i * 180;
-            const y = 50;
-
-            let obj;
-            if (type === 'textbox') obj = game.createTextbox(labelText, y, x);
-            else if (type === 'checkbox') obj = game.createCheckbox(labelText, y, x);
-            else if (type === 'number') obj = game.createNumberSelector(labelText, y, x);
-            else if (type === 'custom') obj = game.createCustom(labelText, y, x);
-            // else if (type === 'captcha') obj = createCaptcha(labelText, y, x);
-            else continue; // skip if unknown type
-
-            physicsObjects.push(obj);
-            curIndex++;
-        }
-    } else if (curIndex == 12) {
-        itsmarbletime();
-        curIndex++;
-    } else if (curIndex == 13) {
-        if (marblesok) {
-            game.createNotif("Thanks.. I'll take those now");
-
-            for (const m of marbles) {
+function noMoreMarbles() {
+    for (const m of marbles) {
                 const idx = physicsObjects.indexOf(m);
                 // it should be in there.
                 if (idx !== -1) {
@@ -218,10 +188,120 @@ export function MORE() {
                 elem.remove(); // remove from dom
             }
 
-            curIndex++;
+}
+
+
+export function MORE() {
+
+    for (const obj of physicsObjects) {
+        const input = obj.elem.querySelector('input');
+        if (!input) continue;
+
+        const bg = input.style.backgroundColor;
+        if (bg !== game.green_color) {
+            return false;
+        }
+    }
+
+    const startX = window.innerWidth / 2 - 330;
+
+
+    if (nextIndex < 12) {
+        console.log(game.SPAWN_ORDER);
+
+        for (let i = 0; i < 4; i++) {
+
+            console.log("I spawned")
+            const labelText = game.SPAWN_ORDER[nextIndex + i];
+            console.log("this one", labelText, nextIndex + i);
+            const type = spawn_info[labelText];
+
+            const x = startX + i * 180;
+            const y = 50;
+
+            let obj;
+            if (type === 'textbox') obj = game.createTextbox(labelText, y, x);
+            else if (type === 'checkbox') obj = game.createCheckbox(labelText, y, x);
+            else if (type === 'number') obj = game.createNumberSelector(labelText, y, x);
+            else if (type === 'custom') obj = game.createCustom(labelText, y, x);
+            // else if (type === 'captcha') obj = createCaptcha(labelText, y, x);
+            else continue; // skip if unknown type
+
+            physicsObjects.push(obj);
+
+        }
+
+        nextIndex += 4;
+
+
+
+
+    } else if (nextIndex == 12) {
+        itsmarbletime();
+        incrementIndex();
+    } else if (nextIndex == 13) {
+        if (marblesok) {
+            game.createNotif("Thanks.. I'll take those now", "lightgray");
+            setTimeout(function () {
+                game.createNotif("Whew. I've had enough of this for a day, haven't you?");
+            }, 5000);
+            setTimeout(function () {
+                game.createNotif("I'm gonna pop out for a bit. Keep yourself comfortable.");
+            }, 10000);
+
+            setTimeout(function () {
+
+    for (let i = physicsObjects.length - 1; i >= 0; i--) {
+        const { elem, body } = physicsObjects[i];
+        if (!elem) {
+            console.log(`Skipping physicsObjects[${i}] because element is missing`);
+            continue;
+        }
+
+        const tag = elem.tagName.toLowerCase();
+        console.log(`Inspecting element[${i}]: <${tag}>`);
+
+        if (
+            tag === 'fieldset' ||
+            (tag === 'input' && elem.type === 'submit' && elem.classList.contains('chaos'))
+        ) {
+            console.log(`Skipping <${tag}> at index ${i} (fieldset or submit button)`);
+            continue;
+        }
+
+        console.log(`Removing element at index ${i}: <${tag}>`);
+
+
+        elem.remove();
+        WORLD_INIT.remove(window.world, body);
+
+        physicsObjects.splice(i, 1);
+    }
+
+
+            }, 13000);
+
+            setTimeout(function () {
+                const thingggg = document.getElementById("thingy");
+                // @ts-ignore
+                thingggg.style.display = "block";
+
+                const obj = game.createPhysBody(thingggg);
+                physicsObjects.push(obj);
+
+            }, 15000)
+
+            noMoreMarbles();
+
+            incrementIndex();
+
+
+        } else {
+            game.createNotif("Hey, there're still marbles on the floor.");
         }
     }
 }
+
 
 
 // Physics setup
@@ -237,19 +317,19 @@ WORLD_INIT.add(window.world, ground);
 
 // left wall
 const leftWall = BODIES_INIT.rectangle(
-    25, 
-    window.innerHeight / 2, 
-    50, 
+    25,
+    window.innerHeight / 2,
+    50,
     window.innerHeight,
     { isStatic: true }
 );
 
 // right wall
 const rightWall = BODIES_INIT.rectangle(
-    window.innerWidth - 25, 
-    window.innerHeight / 2, 
-    50, 
-    window.innerHeight, 
+    window.innerWidth - 25,
+    window.innerHeight / 2,
+    50,
+    window.innerHeight,
     { isStatic: true }
 );
 
@@ -273,7 +353,7 @@ function startPhysics() {
 
     (function update() {
 
-        if (curIndex == 13) {
+        if (nextIndex == 13) {
             offFloor();
         }
 
@@ -304,3 +384,26 @@ window.addEventListener('click', function onFirstClick() {
     startPhysics();
     window.removeEventListener('click', onFirstClick);
 });
+
+
+
+
+
+function debug(skip_to) {
+    for (let i = 0; i < skip_to; i++) {
+
+        document.querySelectorAll('.chaos').forEach(elem => {
+            const input = elem.querySelector('input');
+            if (input) {
+                //@ts-ignore
+                input.style.backgroundColor = game.green_color;
+            }
+        });
+        MORE();
+    }
+
+    console.log(`Ran MORE() ${skip_to} times.`);
+}
+
+//@ts-ignore
+window.debug = debug;
