@@ -82,7 +82,7 @@ function validate(fieldName, value, el) {
             return 'SURPRISE ORGANIC CHEMISTRY TEST :D';
 
         case 'first sentence of the bee movie script with punctuation':
-            if (value == 'According to all known laws of aviation, there is no way a bee should be able to fly.') return null;
+            if (value == 'According to all known laws of aviation, there is no way a bee should be able to fly.' || value == 'According to all known laws of aviation, there is no way that a bee should be able to fly.') return null;
             return `Just copy paste it lmao I'm sorry`;
 
         default:
