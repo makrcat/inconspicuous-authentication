@@ -285,6 +285,7 @@ export function MORE() {
         incrementIndex();
     } else if (nextIndex == 13) {
         console.log(marblesok, debug_override);
+        
         if (marblesok || debug_override) {
             game.createNotif("Thanks.. I'll take those now", "darkgray");
             setTimeout(function () {

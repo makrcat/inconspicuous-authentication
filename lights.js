@@ -74,23 +74,24 @@ function updateCheckboxes() {
 
 
             const crt = document.getElementById('crt');
-            if (crt) {
 
-                crt.style.backgroundImage = 'none';
-                crt.style.backdropFilter = 'none';
-                crt.style.backgroundColor = 'transparent';
+            crt.style.backgroundImage = 'none';
+            crt.style.backdropFilter = 'none';
+            crt.style.backgroundColor = 'transparent';
 
-                document.getElementById("visiblethis").display = 'block';
+            document.getElementById("wow").style.display = "block";
 
-                document.body.style.backgroundImage =
-                    "conic-gradient(white 0% 25%, #f1e4e4 25% 50%, white 50% 75%, #f1e4e4 75% 100%)";
-                document.body.style.backgroundSize = "50px 50px";
-                document.body.style.backgroundRepeat = "repeat";
-                document.body.style.animation = "moveCheckerboard 90s linear infinite";
-            }
 
-            main.clearit();
+
+            document.body.style.backgroundImage =
+                "url('stripe-02.png')";
+
+            document.getElementById("my-text").style.color = "darkgray";
+            document.getElementById("log").style.color = "darkgray";
             document.getElementById("log").innerHTML = "c on g r atu l ations!!!"
+
+
+
 
         }, 2000);
     }
