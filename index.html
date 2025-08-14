@@ -13,71 +13,202 @@
 </head>
 
 <body>
-    <div id="vm"></div>
+    
+    <svg>
+    <filter id="no">
+        <feOffset in="SourceGraphic" dx="1" dy="-1" />
+        <feComponentTransfer result="red">
+            <feFuncG type="discrete" tableValues="0" />
+            <feFuncB type="discrete" tableValues="0" />
+        </feComponentTransfer>
+        <feOffset in="SourceGraphic" dx="-1" dy="2" />
+        <feComponentTransfer result="green">
+            <feFuncR type="discrete" tableValues="0" />
+            <feFuncB type="discrete" tableValues="0" />
+        </feComponentTransfer>
+        <feOffset in="SourceGraphic" dx="-2" dy="1" />
+        <feComponentTransfer result="blue">
+            <feFuncR type="discrete" tableValues="0" />
+            <feFuncG type="discrete" tableValues="0" />
+        </feComponentTransfer>
+        <feComposite in="red" in2="green" operator="arithmetic" k2="1" k3="1" result="rb" />
+        <feComposite in="rb" in2="blue" operator="arithmetic" k2="1" k3="1" />
+    </filter>
+    </svg>
 
-    <span style="color: #dddddd; font-size: 100px;
-    position: absolute;
-    left: 400px" id="my-text">Inconspicuous
-        <br>
-        Authorization
-    </span>
-
-    <span style="color: #dddddd; font-size: 100px;
-    position: absolute;
-    left: 1000px; top: 100px" id="step">0
-    </span>
-
-    <span style="position: absolute;
-    bottom: 0px;
-    color: #aaaaaa; font-size: 100px;
-    left: 400px;
-    font-size: 50px">Easy to make an account</span>
-
-    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
-        <filter id="turbulence">
-            <feTurbulence id="turb" type="turbulence" baseFrequency="0.02" numOctaves="3" result="turbulence" />
-            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="4" xChannelSelector="R"
-                yChannelSelector="G" />
-            <animate xlink:href="#turb" attributeName="baseFrequency" dur="3s" values="0.02;0.03;0.02"
-                repeatCount="indefinite" />
+    <svg>
+        <filter id="pixelate2" x="0" y="0">
+            <feFlood x="0" y="0" height="1" width="1" result="flood"></feFlood>
+            <feComposite width="3" height="3" in="flood" result="composite"></feComposite>
+            <feTile in="composite" result="tiled"></feTile>
+            <feComposite in="SourceGraphic" in2="tiled" operator="in"></feComposite>
+            <feMorphology operator="dilate" radius="1" result="final"></feMorphology>
         </filter>
     </svg>
 
-    <fieldset style="position: absolute; top: 70px; height:280px; 
+  <svg width="0" height="0" style="position:absolute">
+  <filter id="tv-glitch" x="-10%" y="-10%" width="120%" height="120%">
+    <!-- 0) Slight overall darken so even white gets dimmer -->
+    <feComponentTransfer in="SourceGraphic" result="baseDark">
+      <feFuncR type="linear" slope="0.6"/>
+      <feFuncG type="linear" slope="0.6"/>
+      <feFuncB type="linear" slope="0.6"/>
+      <feFuncA type="linear" slope="1"/>
+    </feComponentTransfer>
+
+    <!-- 1) RGB channel split -->
+    <feOffset in="baseDark" dx="2" dy="0" result="rShift"/>
+    <feComponentTransfer in="rShift" result="rOnly">
+      <feFuncG type="discrete" tableValues="0"/>
+      <feFuncB type="discrete" tableValues="0"/>
+    </feComponentTransfer>
+
+    <feOffset in="baseDark" dx="-2" dy="0" result="bShift"/>
+    <feComponentTransfer in="bShift" result="bOnly">
+      <feFuncR type="discrete" tableValues="0"/>
+      <feFuncG type="discrete" tableValues="0"/>
+    </feComponentTransfer>
+
+    <feComponentTransfer in="baseDark" result="gOnly">
+      <feFuncR type="discrete" tableValues="0"/>
+      <feFuncB type="discrete" tableValues="0"/>
+    </feComponentTransfer>
+
+    <feComposite in="rOnly" in2="gOnly" operator="arithmetic" k2="1" k3="1" result="rg"/>
+    <feComposite in="rg" in2="bOnly" operator="arithmetic" k2="1" k3="1" result="rgbSplit"/>
+
+    <!-- 2) Wavy warp (animated) -->
+    <feTurbulence type="fractalNoise" baseFrequency="0.007 0.12" numOctaves="1" seed="3" result="warpNoise">
+      <animate attributeName="baseFrequency" dur="2.3s" values="0.007 0.08; 0.012 0.20; 0.007 0.12" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="rgbSplit" in2="warpNoise" scale="10" xChannelSelector="R" yChannelSelector="G" result="warped">
+      <animate attributeName="scale" dur="1.4s" values="4;12;6;10;4" repeatCount="indefinite"/>
+    </feDisplacementMap>
+
+    <!-- 3) Horizontal scanlines (crisp, repeated) via tiny data-URI image + feTile -->
+    <feImage preserveAspectRatio="none" result="scanTile"
+             href='data:image/svg+xml;utf8,
+               <svg xmlns="http://www.w3.org/2000/svg" width="2" height="4">
+                 <rect width="2" height="1" fill="black" opacity="0.18"/>
+               </svg>'/>
+    <feTile in="scanTile" x="0" y="0" width="100%" height="100%" result="scanlines"/>
+
+    <!-- 4) Mild brightness jitter to mimic unstable channel -->
+    <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" seed="9" result="flickerNoise">
+      <animate attributeName="seed" dur="0.25s" values="8;9;10;9" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feColorMatrix in="flickerNoise" type="matrix" 
+      values="0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 1 0" result="flickerA"/>
+    <feBlend in="warped" in2="scanlines" mode="multiply" result="withScan"/>
+    <feComponentTransfer in="withScan" result="final">
+      <!-- tiny brightness wobble -->
+      <feFuncR type="linear" slope="1">
+        <animate attributeName="slope" dur="0.6s" values="0.95;1;0.92;1" repeatCount="indefinite"/>
+      </feFuncR>
+      <feFuncG type="linear" slope="1">
+        <animate attributeName="slope" dur="0.6s" values="0.95;1;0.92;1" repeatCount="indefinite"/>
+      </feFuncG>
+      <feFuncB type="linear" slope="1">
+        <animate attributeName="slope" dur="0.6s" values="0.95;1;0.92;1" repeatCount="indefinite"/>
+      </feFuncB>
+      <feFuncA type="linear" slope="1"/>
+    </feComponentTransfer>
+
+    <!-- Output -->
+    <feComposite in="final" in2="SourceAlpha" operator="over"/>
+  </filter>
+</svg>
+
+
+
+
+    <div id="container"></div>
+    <div id="crt"></div>
+
+    <div id="vm"></div>
+    <div id="vm2"></div>
+    <img src="battery.png" id="battery" width="40px" style="display: none">
+
+<span style="color: #dddddd; font-size: 100px;
+    position: absolute;
+    left: 400px" id="my-text">Inconspicuous
+    <br>
+    Authorization
+</span>
+
+<span style="color: #dddddd; font-size: 100px;
+    position: absolute;
+    left: 1000px; top: 100px" id="step">0
+</span>
+
+<span style="position: absolute;
+    bottom: 0px;
+    color: #cccccd; font-size: 100px;
+    left: 400px;
+    font-size: 50px" id="log">It should take like ~5 minutes i think
+</span>
+
+<h1 style="position: fixed; top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px; border: 5px dotted pink" id="visiblethis">
+  wow u did it!!! ^u^
+</h1>
+
+<svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" focusable="false">
+    <filter id="turbulence">
+        <feTurbulence id="turb" type="turbulence" baseFrequency="0.02" numOctaves="3" result="turbulence" />
+        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="4" xChannelSelector="R" yChannelSelector="G" />
+        <animate xlink:href="#turb" attributeName="baseFrequency" dur="3s" values="0.02;0.03;0.02"
+            repeatCount="indefinite" />
+    </filter>
+</svg>
+
+
+<fieldset style="position: absolute; top: 70px; height:280px; 
     width: 340px;
-    height: 290px;" class="chaos">
-        <legend>Login to </legend>
-
-    </fieldset>
-
-    <div class="chaos" style="top: 100px; left: 20px;">
-        <label for="fname">Username</label>
-        <input type="text" id="lname" name="lname"><br><br>
-    </div>
-
-    <div class="chaos" style="top: 170px; left: 20px;">
-        <label for="fname">Password</label>
-        <input type="text" id="lname" name="lname"><br><br>
-    </div>
-
-    <div class="chaos" style="top: 240px; left: 20px;">
-        <label for="birthday">Birthday</label>
-        <input type="date" id="birthday" name="birthday"><br><br>
-    </div>
-
-    <input class="chaos" type="submit" id="submit-btn" value="Submit" style="top: 310px; left: 20px; height: 30px;">
+    height: 290px;" class="chaos" id="fieldset">
+    <legend>Login to </legend>
 
 
-    <div id="thingy" style="left: 40%; height: 30px; width: 300px; background-color: rgb(226, 213, 171);
+
+
+  </div>
+
+</fieldset>
+
+<div class="chaos" style="top: 100px; left: 20px; z-index: 999;">
+    <label for="fname">Username</label>
+    <input type="text" id="lname" name="lname"><br><br>
+</div>
+
+<div class="chaos" style="top: 170px; left: 20px; z-index: 999;">
+    <label for="fname">Password</label>
+    <input type="text" id="lname" name="lname"><br><br>
+</div>
+
+<div class="chaos" style="top: 240px; left: 20px; z-index: 999;">
+    <label for="birthday">Birthday</label>
+    <input type="date" id="birthday" name="birthday"><br><br>
+</div>
+
+<input class="chaos" type="submit" id="submit-btn" value="Submit" style="
+    z-index: 999;top: 310px; left: 20px; height: 30px;">
+
+
+<div id="thingy" style="left: 40%; height: 30px; width: 300px; background-color: rgb(226, 213, 171);
     display: none;
 
     position: absolute; top: 10px; border: 1px solid rgb(183, 170, 126); ">
-    </div>
+</div>
 
 
-    <script src="test2.js"></script>
+<script src="test2.js"></script>
 
-    <script src="index.js" type="module"></script>
+<script src="index.js" type="module"></script>
 
 </body>
 

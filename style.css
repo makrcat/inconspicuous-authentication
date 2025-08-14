@@ -1,115 +1,254 @@
+
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 
-    /*
-
-    filter: url(#turbulence);
-*/
 }
 
+@keyframes crtOn {
+  0%   { opacity: 0; }
+  20%  { opacity: 0.8; }
+  40%  { opacity: 0.2; }
+  60%  { opacity: 0.6; }
+  80%  { opacity: 1; }
+  90%  { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+
+#crt {
+  display: none;
+  background-image:
+    repeating-linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.15) 0px,
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 3px);
+
+
+   
+  background-color: rgb(0, 0, 0, 0.0);
+
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+    pointer-events: none;
+  z-index: 9999;
+
+  
+  /*
+  animation: crtOn 0.7s ease-in forwards;
+  */
+
+}
+
+#container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  pointer-events: none;
+
+
+}
+
+.rect {
+  visibility: hidden;
+  box-sizing: border-box;
+  background-color: rgb(0, 0, 0, 0.95);
+  pointer-events: none;
+}
+
+
+
 .letter {
-    transition: color 0.3s ease;
-    cursor: pointer;
+  transition: color 0.3s ease;
+  cursor: pointer;
 }
 
 
 .letter:hover {
-    color: #aaa;
+  color: #aaa;
 }
 
 .chaos {
-    position: absolute;
-    padding: 0;
-    margin: 0;
-    width: 300px;
-}
-
-
-
-
-input {
-    pointer-events: auto;
-    /* normal */
-    position: absolute;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  width: 300px;
 }
 
 
 @keyframes moveCheckerboard {
-    from {
-        background-position: 0 0;
-    }
+  from {
+    background-position: 0 0;
+  }
 
-    to {
-        background-position: 100% 100%;
-    }
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+
+#visiblethis {
+  display: none;
 }
 
 
 fieldset {
-    width: 300px;
+  border: 1px solid #333;
+  border-radius: 4px;
+
+
+  width: 300px;
+  padding: 15px;
+  margin-left: 100px;
+  position: absolute;
+  background-image: conic-gradient(white 0% 25%, #f1e4e4 25% 50%, white 50% 75%, #f1e4e4 75% 100%);
+  background-size: 50px 50px;
+  background-repeat: repeat;
+  animation: moveCheckerboard 30s linear infinite;
 }
 
-
-
+fieldset::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 60px;
+  background: linear-gradient(to bottom, #cfcfcf 0%, #999 40%, #777 60%, #999 100%);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    /* top highlight */
+    inset 0 -1px 3px rgba(0, 0, 0, 0.4),
+    /* bottom shadow */
+    0 1px 2px rgba(0, 0, 0, 0.4);
+  /* outer shadow for depth */
+}
 
 fieldset {
-    border: 1px solid #333;
-    border-radius: 4px;
-    padding: 15px;
-    background-image: conic-gradient(white 0% 25%, #f1e4e4 25% 50%, white 50% 75%, #f1e4e4 75% 100%);
-    background-size: 50px 50px;
-    /* Adjust size of each square */
-    background-repeat: repeat;
-    animation: moveCheckerboard 30s linear infinite;
-    /* Adjust duration and timing function */
+  position: relative;
+  /* needed for ::before positioning */
+  z-index: 1;
+  /* keep fieldset base z-index */
 }
+
+
 
 
 legend {
-    padding: 0 8px;
+  padding: 0 8px;
 }
 
 label {
-    display: block;
-    margin-bottom: 4px;
+  display: block;
+  margin-bottom: 4px;
 }
 
 input {
-    margin-bottom: 12px;
-    width: 100%;
-    padding: 6px;
-    box-sizing: border-box;
-    position: absolute;
+  pointer-events: auto;
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
 }
 
 .input-wrapper {
   position: relative;
-  display: inline-block; /* so width fits input */
+  display: inline-block;
 }
 
 
-#vm {
+#vm, #vm2 {
   position: fixed;
   top: 20px;
-  right: -320px; /* start off-screen */
+  right: -320px;
+  /* start off-screen */
   width: 300px;
   background: #e74c3c;
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
   font-family: sans-serif;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   transition: right 0.4s ease, opacity 0.4s ease;
   opacity: 0;
   z-index: 9999;
   user-select: none;
 }
 
-#vm.show {
-  right: 20px; /* slide in */
+#vm.show, #vm2.show {
+  right: 20px;
+  /* slide in */
   opacity: 1;
+}
+
+.baby {
+  position: absolute;
+  transition: top 1s ease;
+  left: calc(100% - 300px);
+  top: calc(100% - 150px);
+  width: 123px;
+  height: 121px;
+  transition: top 1s ease;
+}
+
+.baby.move-up {
+  top: calc(100% - 150px - 300px);
+}
+
+
+.baby.move-down {
+  top: calc(100% - 150px);
+}
+
+
+
+:root{
+  --red: rgb(229, 97, 97);
+  --yellow: #f6d78d;
+  --pink: rgb(245, 167, 235);
+  --green: rgb(163, 221, 163);
+  --blue: rgb(166, 166, 220);
+  --purple: rgb(203, 181, 222);
+  --teal: #c1e4df;
+  --colorCount: 7
+}
+
+
+
+h1{
+  display:inline-block;
+  font-size: 4em;
+background: linear-gradient(to right, var(--red), var(--yellow) ,var(--pink), var(--green) ,var(--blue),  var(--teal), var(--purple), var(--red) );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size:700%;
+  background-position:0% 0%;
+  animation-name: rainbow;
+
+  margin: auto;
+
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+
+  font-family: sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@keyframes rainbow {
+  0% {background-position:0% 0%;}
+  100% {background-position:100% 0%;}
 }

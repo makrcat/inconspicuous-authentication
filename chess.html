@@ -1,0 +1,62 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Silverman's Chess</title>
+<link rel="stylesheet" href="https://dagazproject.github.io/css/style-7eb2a9d6.css"/>
+</head>
+
+
+<img id="WhiteBoard" style="display:none" src="https://dagazproject.github.io/checkmate/images/4x4.png">
+<img id="BlackBoard" style="display:none" src="https://dagazproject.github.io/checkmate/images/4x4.png">
+<img id="Promote" style="display:none" src="https://dagazproject.github.io/checkmate/images/dialog-2.png">
+<img id="WhitePawn" style="display:none" src="https://dagazproject.github.io/checkmate/images/wpawn.png">
+<img id="BlackPawn" style="display:none" src="https://dagazproject.github.io/checkmate/images/bpawn.png">
+<img id="WhiteRook" style="display:none" src="https://dagazproject.github.io/checkmate/images/wrook.png">
+<img id="BlackRook" style="display:none" src="https://dagazproject.github.io/checkmate/images/brook.png">
+<img id="WhiteQueen" style="display:none" src="https://dagazproject.github.io/checkmate/images/wqueen.png">
+<img id="BlackQueen" style="display:none" src="https://dagazproject.github.io/checkmate/images/bqueen.png">
+<img id="WhiteKing" style="display:none" src="https://dagazproject.github.io/checkmate/images/wking.png">
+<img id="BlackKing" style="display:none" src="https://dagazproject.github.io/checkmate/images/bking.png">
+
+<div class="center-body">
+    <div class="canvas-wrap" id="canvasFit">
+        <div class="section-menu" style="position:absolute;left:0;right:0;bottom:100%;padding-bottom:2px;">
+        <a href="javascript:Dagaz.Controller.undo()" style="display:none" id="undo"><img src="https://dagazproject.github.io/checkmate/images/undo.png"/></a>
+        Copyright (c) 1981 David Silverman (<a target="_blank" href="https://en.wikipedia.org/wiki/Minichess">rules</a>)
+        <a href="javascript:Dagaz.Controller.newGame()">New Game</a>
+        <a href="https://dagazproject.github.io/checkmate/silverman-chess-4x4-board.htm">no AI</a>
+        <a href="javascript:Dagaz.Controller.sound()" id="sound">no Sound</a>
+        <a href="javascript:Dagaz.Controller.go('https://dagazproject.github.io/checkmate/silverman-4x4-editor.htm')">Edit</a>
+        <a href="javascript:Dagaz.Controller.redo()" style="display:none" id="redo"><img src="https://dagazproject.github.io/checkmate/images/redo.png"/></a>
+        </div>
+        <div class="cc2">
+        <canvas id="Canvas" width="276" height="276" style="cursor:default" class="canvas-body">Broken canvas..</canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://dagazproject.github.io/underscore/underscore-min.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/autofit.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/dagaz.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/zrf-model.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/zobrist.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/fen-setup.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/2d-view-v3.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/move-list-v2.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/session-manager.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/sound-manager-v2.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/random-ai.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/garbo-ai.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/fast-ai.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/sgf-parser.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/common-edit.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/garbochess-ai.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/silverman-chess-promotion.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/chess-goal.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/chess-invariant.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/chess-4x4-ai.js"></script>
+<script src="https://dagazproject.github.io/checkmate/scripts/silverman-chess-4x4.js"></script>
+<script src="https://dagazproject.github.io/common-scripts/app-v5.js"></script>
+
+</body>
+</html>

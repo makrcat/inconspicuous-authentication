@@ -129,7 +129,7 @@ function makeTrackable(svg) {
         svg.setAttribute('aria-valuenow', v);
     }
 
-    
+
     function updateProgressPath(len) {
         let d = '';
         let sampleCount = MAX;

@@ -8,7 +8,6 @@ export const red_color = "pink";
 export const green_color = "lightgreen";
 
 
-
 const aminoAcids = {
     "tyrosine": "https://upload.wikimedia.org/wikipedia/commons/d/d3/TyrosineZwitterion3D.png",
     "cysteine": `https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Cysteine-from-xtal-3D-bs-17.png/1920px-Cysteine-from-xtal-3D-bs-17.png`,
@@ -74,12 +73,16 @@ function validate(fieldName, value, el) {
             if (value == 'so cool') return null;
             return 'security failed: miku is disappointed';
 
+         case 'how many roads does a man walk down':
+            if (value == '42') return null;
+            return 'what is 6 x 9 (this is a reference)';
+
         case 'codons of this amino acid':
             if (value === selectedAminoAcid) return null;
             return 'No...';
 
         case 'the bee movie script':
-            if (value == 'According to all known laws of aviation, there is no way a bee should be able to fly') return null;
+            if (value == 'According to all known laws of aviation, there is no way that a bee should be able to fly') return null;
             return 'According to all known laws of aviation,..';
 
         default:
@@ -102,7 +105,7 @@ export const spawn_info = {
     "pipe bomb": "textbox",
     "the bee movie script": "textbox",
     "codons of this amino acid": "custom",
-    "name this note": "custom",
+    "how many roads does a man walk down": "number",
 }
 
 export const SPAWN_ORDER = [
@@ -120,7 +123,7 @@ export const SPAWN_ORDER = [
     "pipe bomb",
     "the bee movie script",
     "codons of this amino acid",
-    "name this note"
+    "how many roads does a man walk down"
 ]
 
 
@@ -151,6 +154,8 @@ export function createPhysBody(elem) {
         Math.max(rect.height, 20),
         { restitution: 0.5, friction: 0.1, frictionAir: 0.02 }
     );
+
+
     WORLD_INIT.add(window.world, body);
     elem.style.position = 'absolute';
     return { elem, body };
@@ -185,11 +190,6 @@ export function createTextbox(labelText, top, left) {
         top: `${top}px`,
         left: `${left}px`,
 
-
-        padding: '1px 4px',
-        paddingBottom: '30px',
-
-        width: '200px',
         boxSizing: 'border-box',
         border: '1px dashed gray',
 
@@ -204,7 +204,6 @@ export function createTextbox(labelText, top, left) {
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.style.width = '93%';
     input.style.padding = '6px';
     input.style.boxSizing = 'border-box';
 
@@ -230,7 +229,6 @@ export function createCheckbox(labelText, top, left) {
         boxSizing: 'border-box',
         userSelect: 'none',
         border: '1px dashed gray',
-        paddingRight: '25px',
         width: 'unset',
     });
 
@@ -262,12 +260,9 @@ export function createNumberSelector(labelText, top, left) {
         position: 'absolute',
         top: `${top}px`,
         left: `${left}px`,
-        padding: '1px 4px',
-        paddingBottom: '30px',
         boxSizing: 'border-box',
         userSelect: 'none',
         border: '1px dashed gray',
-        width: 'unset',
     });
 
     const label = document.createElement('label');
@@ -301,11 +296,7 @@ export function createCustom(name, top, left) {
         position: 'absolute',
         top: `${top}px`,
         left: `${left}px`,
-        padding: '8px',
         backgroundColor: 'rgb(255, 255, 255, 0.5)',
-
-        width: '220px',
-        height: '220px',
 
         boxSizing: 'border-box',
         userSelect: 'none',
@@ -313,6 +304,8 @@ export function createCustom(name, top, left) {
 
         display: 'flex',
         flexDirection: 'column',
+        width: '220px',
+        height: '220px',
     });
 
     const label = document.createElement('label');
@@ -359,7 +352,6 @@ export function createCustom(name, top, left) {
             checkThis(name, input);
         });
 
-    } else if (name == "name this note") {
 
     } else if (name == "thingy") {
 
@@ -374,24 +366,146 @@ export function createCustom(name, top, left) {
 }
 
 
-/** @param s { string | null } */
-export function createNotif(s, color = red_color) {
-    /** @type {HTMLElement | null} */
+export function createNotif(s, color = red_color, img = "none") {
+    // idk why can't use null
+
     const notification = document.getElementById('vm');
     if (!notification) throw new Error("didn't find notification");
+    notification.classList.add("show");
 
 
-    if (color != red_color) notification.style.backgroundColor = color;
-    if (s == null) return;
+    if (!s) {
+        notification.classList.remove("show");
+        return;
+    }
 
 
-    notification.textContent = s;
-    notification.classList.add('show');
+    if (img === "none") {
+        if (color != red_color) notification.style.backgroundColor = color;
+        if (s == null) return;
 
-    setTimeout(function () {
-        notification.classList.remove('show');
-    }, 4000)
+        notification.textContent = s;
+        notification.classList.add('show');
 
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 3000)
+    } else {
+
+        notification.style.backgroundColor = 'black';
+        notification.style.color = 'white';
+
+        notification.style.display = 'flex';
+        notification.style.alignItems = 'center';
+        notification.style.justifyContent = 'flex-start';
+        notification.style.padding = '10px';
+
+        let imgElem; // string
+        imgElem = document.createElement('img');
+        imgElem.src = img;
+
+        if (imgElem) {
+            imgElem.style.width = '48px';
+            imgElem.style.height = '48px';
+            imgElem.style.objectFit = 'cover';
+            imgElem.style.marginRight = '12px';
+            imgElem.style.flexShrink = '0';
+
+            notification.appendChild(imgElem);
+        }
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = s;
+        notification.appendChild(textSpan);
+
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 3000)
+    }
 }
 
 
+
+
+function makeButton(label, onClick) {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.style.cssText = `
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #444;
+    min-height: 20px;
+    color: white;
+    transition: background-color 0.2s;
+  `;
+    btn.addEventListener('mouseenter', () => btn.style.backgroundColor = '#666');
+    btn.addEventListener('mouseleave', () => btn.style.backgroundColor = '#444');
+    btn.addEventListener('click', () => {
+        onClick();
+        const notification = document.getElementById('vm2');
+        if (!notification) return;
+
+        notification.classList.remove('show');
+    });
+    return btn;
+}
+
+export function createOption(s, color, img, choice1Text, choice1Fn, choice2Text, choice2Fn) {
+    const notification = document.getElementById('vm2');
+    if (!notification) throw new Error("didn't find notification");
+    notification.classList.add("show");
+
+    const notifPanel = document.getElementById('vm');
+    if (notifPanel) {
+        notifPanel.classList.remove('show');
+        notifPanel.innerHTML = '';
+    }
+
+
+    notification.innerHTML = '';
+    notification.style.backgroundColor = '';
+    notification.style.color = '';
+    notification.style.display = '';
+    notification.style.alignItems = '';
+    notification.style.justifyContent = '';
+    notification.style.padding = '';
+
+    if (img) {
+        notification.style.backgroundColor = 'black';
+        notification.style.color = 'white';
+        notification.style.display = 'flex';
+        notification.style.alignItems = 'center';
+        notification.style.justifyContent = 'flex-start';
+        notification.style.padding = '10px';
+
+        const imgElem = document.createElement('img');
+        imgElem.src = img;
+        imgElem.style.width = '48px';
+        imgElem.style.height = '48px';
+        imgElem.style.objectFit = 'cover';
+        imgElem.style.marginRight = '12px';
+        imgElem.style.flexShrink = '0';
+
+        notification.appendChild(imgElem);
+    } else {
+        notification.style.backgroundColor = color;
+        notification.style.color = 'inherit';
+    }
+
+    const textSpan = document.createElement('span');
+    textSpan.textContent = s;
+    textSpan.style.flex = '1';
+    notification.appendChild(textSpan);
+
+    const btnContainer = document.createElement('div');
+    btnContainer.style.marginLeft = '12px';
+    btnContainer.style.display = 'flex';
+    btnContainer.style.gap = '8px';
+
+    btnContainer.appendChild(makeButton(choice1Text, choice1Fn));
+    btnContainer.appendChild(makeButton(choice2Text, choice2Fn));
+
+    notification.appendChild(btnContainer);
+    notification.classList.add('show');
+}

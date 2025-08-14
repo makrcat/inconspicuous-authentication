@@ -2,19 +2,27 @@
 
 import * as game from './gameUtils.js';
 import * as init from './init.js';
+import * as lights from './lights.js';
+let debug_override = false;
 
 //@ts-ignore
 export const { Engine: ENGINE_INIT, Bodies: BODIES_INIT, World: WORLD_INIT, Mouse: MOUSE_INIT, MouseConstraint } = Matter;
 
-window.engine = ENGINE_INIT.create();
-window.world = window.engine.world;
+let baby = null;
+// @ts-ignore
+let fieldset = document.getElementsByTagName('fieldset')[0];
+let fieldsetBg = 'unchanged';
 
 
 window.engine = ENGINE_INIT.create();
 window.world = window.engine.world;
 
 
-const physicsObjects = [];
+window.engine = ENGINE_INIT.create();
+window.world = window.engine.world;
+
+
+let physicsObjects = [];
 
 let spawn_info = game.spawn_info;
 
@@ -23,10 +31,18 @@ init.runAttachValidation();
 init.attachButtonListener();
 init.backgroundText();
 
+let fieldsetBody = null;
+let batteryBody = null;
+
 function runAttachPhysics() {
     console.log("is this the problem");
     document.querySelectorAll('.chaos').forEach(elem => {
         const obj = game.createPhysBody(elem);
+
+        if (elem.tagName === 'FIELDSET') {
+            const { elem, body } = obj;
+            fieldsetBody = body;
+        }
         console.log(obj);
         console.log("still goin");
         physicsObjects.push(obj);
@@ -35,6 +51,30 @@ function runAttachPhysics() {
 
 runAttachPhysics();
 
+
+let battery = document.getElementById("battery");
+
+let batteryToRemove = false;
+function checkBatterySnap() {
+
+    if (!(fieldsetBg === 'changed')) return false;
+
+
+    if (!batteryBody || !fieldsetBody || !battery) return false;
+
+    //@ts-ignore
+    const collision = Matter.SAT.collides(batteryBody, fieldsetBody);
+    if (collision && collision.collided) {
+
+        batteryToRemove = true;
+        return true;
+
+    }
+
+    return false;
+
+
+}
 
 
 function losingMarbles(top, left, cdeg = 120) {
@@ -173,40 +213,44 @@ function incrementIndex() {
 
 function noMoreMarbles() {
     for (const m of marbles) {
-                const idx = physicsObjects.indexOf(m);
-                // it should be in there.
-                if (idx !== -1) {
-                    physicsObjects.splice(idx, 1);
-                } else {
-                    console.log("somehow, while removing the marble, it doesn't exist?");
-                }
-                // remove from rendering lol
+        const idx = physicsObjects.indexOf(m);
+        // it should be in there.
+        if (idx !== -1) {
+            physicsObjects.splice(idx, 1);
+        } else {
+            console.log("somehow, while removing the marble, it doesn't exist?");
+        }
+        // remove from rendering lol
 
 
-                let { elem, body } = m;
-                WORLD_INIT.remove(window.world, body);
-                elem.remove(); // remove from dom
-            }
+        let { elem, body } = m;
+        WORLD_INIT.remove(window.world, body);
+        elem.remove(); // remove from dom
+    }
 
 }
 
 
 export function MORE() {
 
-    for (const obj of physicsObjects) {
-        const input = obj.elem.querySelector('input');
-        if (!input) continue;
-
-        const bg = input.style.backgroundColor;
-        if (bg !== game.green_color) {
-            return false;
-        }
-    }
+    console.log("okok");
 
     const startX = window.innerWidth / 2 - 330;
 
 
     if (nextIndex < 12) {
+
+        for (const obj of physicsObjects) {
+            const input = obj.elem.querySelector('input');
+            if (!input) continue;
+
+            const bg = input.style.backgroundColor;
+            if (bg !== game.green_color) {
+                return false;
+            }
+        }
+
+
         console.log(game.SPAWN_ORDER);
 
         for (let i = 0; i < 4; i++) {
@@ -240,46 +284,46 @@ export function MORE() {
         itsmarbletime();
         incrementIndex();
     } else if (nextIndex == 13) {
-        if (marblesok) {
-            game.createNotif("Thanks.. I'll take those now", "lightgray");
+        console.log(marblesok, debug_override);
+        if (marblesok || debug_override) {
+            game.createNotif("Thanks.. I'll take those now", "darkgray");
             setTimeout(function () {
                 game.createNotif("Whew. I've had enough of this for a day, haven't you?");
-            }, 5000);
+            }, 4000);
             setTimeout(function () {
                 game.createNotif("I'm gonna pop out for a bit. Keep yourself comfortable.");
-            }, 10000);
+            }, 8000);
 
             setTimeout(function () {
 
-    for (let i = physicsObjects.length - 1; i >= 0; i--) {
-        const { elem, body } = physicsObjects[i];
-        if (!elem) {
-            console.log(`Skipping physicsObjects[${i}] because element is missing`);
-            continue;
-        }
+                for (let i = physicsObjects.length - 1; i >= 0; i--) {
+                    const { elem, body } = physicsObjects[i];
+                    if (!elem) {
+                        console.log(`Skipping physicsObjects[${i}] because element is missing`);
+                        continue;
+                    }
 
-        const tag = elem.tagName.toLowerCase();
-        console.log(`Inspecting element[${i}]: <${tag}>`);
+                    const tag = elem.tagName.toLowerCase();
+                    console.log(`Inspecting element[${i}]: <${tag}>`);
 
-        if (
-            tag === 'fieldset' ||
-            (tag === 'input' && elem.type === 'submit' && elem.classList.contains('chaos'))
-        ) {
-            console.log(`Skipping <${tag}> at index ${i} (fieldset or submit button)`);
-            continue;
-        }
+                    if (
+                        tag === 'fieldset'
+                    ) {
+                        console.log(`Skipping <${tag}> at index ${i} (fieldset)`);
+                        continue;
+                    }
 
-        console.log(`Removing element at index ${i}: <${tag}>`);
-
-
-        elem.remove();
-        WORLD_INIT.remove(window.world, body);
-
-        physicsObjects.splice(i, 1);
-    }
+                    console.log(`Removing element at index ${i}: <${tag}>`);
 
 
-            }, 13000);
+                    elem.remove();
+                    WORLD_INIT.remove(window.world, body);
+
+                    physicsObjects.splice(i, 1);
+                }
+
+
+            }, 9000);
 
             setTimeout(function () {
                 const thingggg = document.getElementById("thingy");
@@ -289,7 +333,167 @@ export function MORE() {
                 const obj = game.createPhysBody(thingggg);
                 physicsObjects.push(obj);
 
-            }, 15000)
+            }, 10000)
+
+
+
+            setTimeout(function () {
+                baby = document.createElement('img');
+                baby.src = 'idle1.png';
+                baby.alt = 'weird baby';
+
+                baby.classList.add('baby');
+                baby.style.border = '1px dashed black';
+                baby.style.width = '123px';
+                baby.style.height = '121px';
+                baby.draggable = false;
+                baby.addEventListener('dragstart', e => e.preventDefault());
+                baby.style.display = 'block';
+                document.body.appendChild(baby);
+            }, 15000);
+
+
+            setTimeout(function () {
+                game.createOption(
+                    "Yo lemme show you a magic trick", "black", "idle1.png",
+                    "Ok",
+                    () => {
+                        setTimeout(function () {
+                            game.createNotif("Ok cool", "black", "idle1.png")
+                        }, 1000);
+
+
+                        const imgsToPreload = ['battery1.png', 'battery2.png', 'sleep2.png', 'sleep3.png'];
+
+                        let loadedCount = 0;
+                        imgsToPreload.forEach(src => {
+                            const img = new Image();
+                            img.src = src;
+                            img.onload = () => {
+                                loadedCount++;
+                                if (loadedCount === imgsToPreload.length) {
+
+                                    // All images loaded
+                                    setTimeout(() => {
+                                        baby.src = "battery1.png";
+                                        baby.classList.add('move-up');
+                                    }, 3000);
+
+                                    setTimeout(() => {
+                                        baby.src = "battery2.png";
+                                    }, 4000);
+
+                                    setTimeout(() => {
+                                        const battery = document.getElementById("battery");
+                                        if (!battery) {
+                                            console.log("nuh");
+                                            return;
+                                        }
+                                        battery.style.display = "block";
+                                        const babyRect = baby.getBoundingClientRect();
+
+                                        battery.style.position = 'absolute';
+                                        battery.style.left = `${babyRect.left + window.scrollX + 20}px`;
+                                        battery.style.top = `${babyRect.top + window.scrollY + 20}px`;
+                                        battery.draggable = false;
+                                        battery.addEventListener('dragstart', e => e.preventDefault());
+
+                                        const physBody = game.createPhysBody(battery);
+
+                                        physicsObjects.push(physBody);
+
+
+                                        batteryBody = physBody.body;
+                                        physicsObjects.push(physBody);
+
+
+                                        fieldset.style.cursor = "pointer";
+                                        fieldset.onclick = () => {
+                                            fieldsetBg = 'changed';
+
+                                            fieldset.style.backgroundColor = 'white';
+                                            fieldset.style.backgroundImage = `url('stripe-02.png')`;
+
+
+                                            const style = document.createElement('style');
+                                            style.textContent = `
+                                        fieldset::after {
+                                        content: none !important;
+                                        }
+                                        `;
+                                            document.head.appendChild(style);
+                                            // -------- wires 
+
+                                            const img = document.createElement('img');
+
+                                            img.src = 'wires_side.png';
+                                            img.style.position = 'absolute';
+                                            img.style.top = '20px';
+                                            img.style.right = '-50px';
+                                            img.style.width = '50px';
+                                            img.style.height = 'auto';
+
+
+                                            fieldset.appendChild(img);
+
+
+
+                                            fieldset.style.border = '1px solid red';
+
+                                            fieldset.onclick = null;
+
+                                            setTimeout(() => {
+                                                const crt = document.getElementById("crt")
+                                                if (crt) {
+                                                    crt.style.display = "block";
+                                                    crt.style.animation = "crtOn 1.5s ease-in forwards";
+                                                }
+
+                                            })
+                                            // no more clicking :)
+
+                                        }
+
+
+
+                                        incrementIndex();
+
+                                    }, 5000);
+
+
+
+                                    setTimeout(() => {
+                                        baby.src = "sleep2.png";
+                                        baby.classList.remove('move-up');
+                                        baby.classList.add('move-down');
+                                    }, 9000);
+
+                                    setTimeout(() => {
+                                        baby.src = "sleep3.png";
+                                    }, 10000);
+                                }
+                            };
+                            img.onerror = () => {
+                                alert("ok the images dont load :/")
+                            }
+                        });
+
+                    },
+                    "No",
+                    () => {
+                        setTimeout(function () {
+                            game.createNotif("Eternal damnation.", "black", "idle1.png")
+                        }, 1000);
+
+                        setTimeout(function () {
+                            window.close()
+                        }, 5000)
+                    }
+                );
+            }, 18000);
+
+
+            ///1000)
 
             noMoreMarbles();
 
@@ -344,11 +548,22 @@ const mouseConstraint = MouseConstraint.create(window.engine, {
 });
 WORLD_INIT.add(window.world, mouseConstraint);
 
-let running = false;
+window.running = false;
 
+
+
+
+
+//// ----------- ahhuahauhauh
 function startPhysics() {
-    if (running) return;
-    running = true;
+
+    document.querySelectorAll('fieldset').forEach(fs => {
+        fs.style.transition = 'none';
+        fs.style.animation = 'none';
+    });
+
+    if (window.running) return;
+    window.running = true;
     ENGINE_INIT.run(window.engine);
 
     (function update() {
@@ -356,6 +571,46 @@ function startPhysics() {
         if (nextIndex == 13) {
             offFloor();
         }
+
+        else if (nextIndex == 15 || debug_override) {
+            if (checkBatterySnap()) {
+                if (batteryToRemove && battery) {
+                    batteryToRemove = false;
+
+                    WORLD_INIT.remove(window.world, batteryBody);
+
+                    battery.remove();
+
+                    const newBattery = document.createElement("img");
+                    newBattery.src = "battery.png";  // your path here
+                    newBattery.alt = "Battery";
+                    newBattery.style.position = "absolute";
+                    newBattery.style.width = "40px";
+                    newBattery.style.height = "auto";
+
+                    newBattery.style.right = `-40px`;
+                    newBattery.style.top = `115px`;
+
+                    // fieldset.style.position = 'relative'; GRRR
+                    fieldset.appendChild(newBattery);
+
+                    const idx = physicsObjects.findIndex(o => o.body === batteryBody);
+                    if (idx !== -1) physicsObjects.splice(idx, 1);
+
+                    batteryBody = null;
+                    battery = null;
+
+                    lights.LIGHTS();
+                    incrementIndex(); // stop this update loop now 
+
+                }
+
+
+            }
+
+
+        }
+
 
         physicsObjects.forEach(({ elem, body }) => {
             const { position, angle } = body;
@@ -388,7 +643,6 @@ window.addEventListener('click', function onFirstClick() {
 
 
 
-
 function debug(skip_to) {
     for (let i = 0; i < skip_to; i++) {
 
@@ -402,8 +656,33 @@ function debug(skip_to) {
         MORE();
     }
 
+
+    debug_override = true;
+
     console.log(`Ran MORE() ${skip_to} times.`);
 }
 
 //@ts-ignore
 window.debug = debug;
+
+
+export function clearit() {
+    if (!physicsObjects || physicsObjects.length === 0) return;
+
+    for (let i = physicsObjects.length - 1; i >= 0; i--) {
+        const obj = physicsObjects[i];
+        const { elem, body } = obj;
+
+        if (elem && elem.parentElement) {
+            elem.parentElement.removeChild(elem);
+        }
+
+        if (body) {
+            WORLD_INIT.remove(window.world, body);
+        }
+
+        physicsObjects.splice(i, 1);
+    }
+
+    physicsObjects = [];
+}
