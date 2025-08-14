@@ -88,7 +88,7 @@ function updateCheckboxes() {
 
             document.getElementById("my-text").style.color = "darkgray";
             document.getElementById("log").style.color = "darkgray";
-            document.getElementById("log").innerHTML = "c on g r atu l ations!!!"
+            document.getElementById("log").innerHTML = "c on g r atu l ations!!! you escaped the matrix.. or something.. whatever..."
 
 
 

@@ -237,6 +237,17 @@ export function MORE() {
 
     const startX = window.innerWidth / 2 - 330;
 
+    if (nextIndex == 8) {
+        console.log("test");
+        //@ts-ignore
+        document.getElementById("submit-btn").value = "it's ok dw :L";
+    } else if (nextIndex > 8) {
+         //@ts-ignore
+        document.getElementById("submit-btn").value = "Submit";
+
+    }
+
+
 
     if (nextIndex < 12) {
         // ha ok fix uh
