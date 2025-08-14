@@ -79,11 +79,11 @@ function validate(fieldName, value, el) {
 
         case 'codons of this amino acid':
             if (value === selectedAminoAcid) return null;
-            return 'No...';
+            return 'SURPRISE ORGANIC CHEMISTRY TEST :D';
 
-        case 'the bee movie script':
-            if (value == 'According to all known laws of aviation, there is no way that a bee should be able to fly') return null;
-            return 'According to all known laws of aviation,..';
+        case 'first sentence of the bee movie script with punctuation':
+            if (value == 'According to all known laws of aviation, there is no way that a bee should be able to fly.') return null;
+            return `Just copy paste it lmao I'm sorry`;
 
         default:
             return 'error?';
