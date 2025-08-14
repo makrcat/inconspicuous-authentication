@@ -238,7 +238,10 @@ export function MORE() {
     const startX = window.innerWidth / 2 - 330;
 
 
-    if (nextIndex < 12) {
+    if (nextIndex <= 12) {
+        // ha ok fix uh
+        // ;..
+      
 
         for (const obj of physicsObjects) {
             const input = obj.elem.querySelector('input');
