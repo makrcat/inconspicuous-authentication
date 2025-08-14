@@ -238,7 +238,7 @@ export function MORE() {
     const startX = window.innerWidth / 2 - 330;
 
 
-    if (nextIndex <= 12) {
+    if (nextIndex < 12) {
         // ha ok fix uh
         // ;..
 
@@ -276,11 +276,15 @@ export function MORE() {
 
             physicsObjects.push(obj);
 
+         
+            
+
         }
 
-        nextIndex += 4;
-
-
+incrementIndex();
+incrementIndex();
+incrementIndex();
+incrementIndex();
 
 
     } else if (nextIndex == 12) {
