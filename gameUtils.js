@@ -103,7 +103,7 @@ export const spawn_info = {
     "forfeit newborn": "checkbox",
 
     "pipe bomb": "textbox",
-    "the bee movie script": "textbox",
+    "first sentence of the bee movie script with punctuation": "textbox",
     "codons of this amino acid": "custom",
     "how many roads does a man walk down": "number",
 }
@@ -121,7 +121,7 @@ export const SPAWN_ORDER = [
     "forfeit newborn",
 
     "pipe bomb",
-    "the bee movie script",
+    "first sentence of the bee movie script with punctuation",
     "codons of this amino acid",
     "how many roads does a man walk down"
 ]

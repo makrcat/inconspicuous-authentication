@@ -241,7 +241,7 @@ export function MORE() {
     if (nextIndex <= 12) {
         // ha ok fix uh
         // ;..
-      
+
 
         for (const obj of physicsObjects) {
             const input = obj.elem.querySelector('input');
@@ -288,7 +288,7 @@ export function MORE() {
         incrementIndex();
     } else if (nextIndex == 13) {
         console.log(marblesok, debug_override);
-        
+
         if (marblesok || debug_override) {
             game.createNotif("Thanks.. I'll take those now", "darkgray");
             setTimeout(function () {
@@ -357,145 +357,12 @@ export function MORE() {
             }, 15000);
 
 
-            setTimeout(function () {
-                game.createOption(
-                    "Yo lemme show you a magic trick", "black", "idle1.png",
-                    "Ok",
-                    () => {
-                        setTimeout(function () {
-                            game.createNotif("Ok cool", "black", "idle1.png")
-                        }, 1000);
-
-
-                        const imgsToPreload = ['battery1.png', 'battery2.png', 'sleep2.png', 'sleep3.png'];
-
-                        let loadedCount = 0;
-                        imgsToPreload.forEach(src => {
-                            const img = new Image();
-                            img.src = src;
-                            img.onload = () => {
-                                loadedCount++;
-                                if (loadedCount === imgsToPreload.length) {
-
-                                    // All images loaded
-                                    setTimeout(() => {
-                                        baby.src = "battery1.png";
-                                        baby.classList.add('move-up');
-                                    }, 3000);
-
-                                    setTimeout(() => {
-                                        baby.src = "battery2.png";
-                                    }, 4000);
-
-                                    setTimeout(() => {
-                                        const battery = document.getElementById("battery");
-                                        if (!battery) {
-                                            console.log("nuh");
-                                            return;
-                                        }
-                                        battery.style.display = "block";
-                                        const babyRect = baby.getBoundingClientRect();
-
-                                        battery.style.position = 'absolute';
-                                        battery.style.left = `${babyRect.left + window.scrollX + 20}px`;
-                                        battery.style.top = `${babyRect.top + window.scrollY + 20}px`;
-                                        battery.draggable = false;
-                                        battery.addEventListener('dragstart', e => e.preventDefault());
-
-                                        const physBody = game.createPhysBody(battery);
-
-                                        physicsObjects.push(physBody);
-
-
-                                        batteryBody = physBody.body;
-                                        physicsObjects.push(physBody);
-
-
-                                        fieldset.style.cursor = "pointer";
-                                        fieldset.onclick = () => {
-                                            fieldsetBg = 'changed';
-
-                                            fieldset.style.backgroundColor = 'white';
-                                            fieldset.style.backgroundImage = `url('stripe-02.png')`;
-
-
-                                            const style = document.createElement('style');
-                                            style.textContent = `
-                                        fieldset::after {
-                                        content: none !important;
-                                        }
-                                        `;
-                                            document.head.appendChild(style);
-                                            // -------- wires 
-
-                                            const img = document.createElement('img');
-
-                                            img.src = 'wires_side.png';
-                                            img.style.position = 'absolute';
-                                            img.style.top = '20px';
-                                            img.style.right = '-50px';
-                                            img.style.width = '50px';
-                                            img.style.height = 'auto';
-
-
-                                            fieldset.appendChild(img);
 
 
 
-                                            fieldset.style.border = '1px solid red';
-
-                                            fieldset.onclick = null;
-
-                                            setTimeout(() => {
-                                                const crt = document.getElementById("crt")
-                                                if (crt) {
-                                                    crt.style.display = "block";
-                                                    crt.style.animation = "crtOn 1.5s ease-in forwards";
-                                                }
-
-                                            })
-                                            // no more clicking :)
-
-                                        }
-
-
-
-                                        incrementIndex();
-
-                                    }, 5000);
-
-
-
-                                    setTimeout(() => {
-                                        baby.src = "sleep2.png";
-                                        baby.classList.remove('move-up');
-                                        baby.classList.add('move-down');
-                                    }, 9000);
-
-                                    setTimeout(() => {
-                                        baby.src = "sleep3.png";
-                                    }, 10000);
-                                }
-                            };
-                            img.onerror = () => {
-                                alert("ok the images dont load :/")
-                            }
-                        });
-
-                    },
-                    "No",
-                    () => {
-                        setTimeout(function () {
-                            game.createNotif("Eternal damnation.", "black", "idle1.png")
-                        }, 1000);
-
-                        setTimeout(function () {
-                            window.close()
-                        }, 5000)
-                    }
-                );
+            setTimeout(function () { 
+                dialogue();
             }, 18000);
-
 
             ///1000)
 
@@ -511,6 +378,149 @@ export function MORE() {
 }
 
 
+
+function dialogue() {
+
+
+
+    game.createOption(
+        "Yo lemme show you a magic trick", "black", "idle1.png",
+        "Ok",
+        () => {
+            setTimeout(function () {
+                game.createNotif("Ok cool", "black", "idle1.png")
+            }, 1000);
+
+
+            const imgsToPreload = ['battery1.png', 'battery2.png', 'sleep2.png', 'sleep3.png'];
+
+            let loadedCount = 0;
+            imgsToPreload.forEach(src => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === imgsToPreload.length) {
+
+                        // All images loaded
+                        setTimeout(() => {
+                            baby.src = "battery1.png";
+                            baby.classList.add('move-up');
+                        }, 3000);
+
+                        setTimeout(() => {
+                            baby.src = "battery2.png";
+                        }, 4000);
+
+                        setTimeout(() => {
+                            const battery = document.getElementById("battery");
+                            if (!battery) {
+                                console.log("nuh");
+                                return;
+                            }
+                            battery.style.display = "block";
+                            const babyRect = baby.getBoundingClientRect();
+
+                            battery.style.position = 'absolute';
+                            battery.style.left = `${babyRect.left + window.scrollX + 20}px`;
+                            battery.style.top = `${babyRect.top + window.scrollY + 20}px`;
+                            battery.draggable = false;
+                            battery.addEventListener('dragstart', e => e.preventDefault());
+
+                            const physBody = game.createPhysBody(battery);
+
+                            physicsObjects.push(physBody);
+
+
+                            batteryBody = physBody.body;
+                            physicsObjects.push(physBody);
+
+
+                            fieldset.style.cursor = "pointer";
+                            fieldset.onclick = () => {
+                                fieldsetBg = 'changed';
+
+                                fieldset.style.backgroundColor = 'white';
+                                fieldset.style.backgroundImage = `url('stripe-02.png')`;
+
+
+                                const style = document.createElement('style');
+                                style.textContent = `
+                                        fieldset::after {
+                                        content: none !important;
+                                        }
+                                        `;
+                                document.head.appendChild(style);
+                                // -------- wires 
+
+                                const img = document.createElement('img');
+
+                                img.src = 'wires_side.png';
+                                img.style.position = 'absolute';
+                                img.style.top = '20px';
+                                img.style.right = '-50px';
+                                img.style.width = '50px';
+                                img.style.height = 'auto';
+
+
+                                fieldset.appendChild(img);
+
+
+
+                                fieldset.style.border = '1px solid red';
+
+                                fieldset.onclick = null;
+
+                                setTimeout(() => {
+                                    const crt = document.getElementById("crt")
+                                    if (crt) {
+                                        crt.style.display = "block";
+                                        crt.style.animation = "crtOn 1.5s ease-in forwards";
+                                    }
+
+                                })
+                                // no more clicking :)
+
+                            }
+
+
+
+                            incrementIndex();
+
+                        }, 5000);
+
+
+
+                        setTimeout(() => {
+                            baby.src = "sleep2.png";
+                            baby.classList.remove('move-up');
+                            baby.classList.add('move-down');
+                        }, 9000);
+
+                        setTimeout(() => {
+                            baby.src = "sleep3.png";
+                        }, 10000);
+                    }
+                };
+                img.onerror = () => {
+                    alert("ok the images dont load :/")
+                }
+            });
+
+        },
+        "No",
+        () => {
+            setTimeout(function () {
+                game.createNotif("Eternal damnation.", "black", "idle1.png")
+            }, 1000);
+
+            setTimeout(function () {
+                window.close()
+            }, 5000)
+        }
+    );
+
+}
 
 // Physics setup
 
